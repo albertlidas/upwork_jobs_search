@@ -8,19 +8,6 @@ import os
 import webbrowser
 
 
-JOB_QUERY_LOW_END = dict(
-    skills=['python'],
-    budget='-500',
-    duration=['week', 'month', 'ongoing']
-)
-
-JOB_QUERY_HIGH_END = dict(
-    skills=['python'],
-    budget='500-',
-    duration=['month', 'ongoing', 'semester', 'quarter']
-)
-
-
 def encode(ele):
     return base64.b64encode(hashlib.sha1(str(ele)).digest())
 
@@ -53,43 +40,41 @@ def get_client():
 
 if __name__ == '__main__':
 
-    IGNORE_INITIAL_JOBS = True
-    job_query = JOB_QUERY_LOW_END
     NOTIFICATION_FILE = 'notification.wav'
 
     client = get_client()
-    prev_jobs = set()
 
-    if IGNORE_INITIAL_JOBS:
-        jobs = client.provider_v2.search_jobs(job_query)
-        for job in jobs:
-            prev_jobs.add(encode(job))
+    all_ids = []
+
+    queries = ['python', 'django']
+    initial_jobs = []
+
+    for q in queries:
+        initial_jobs.extend(client.provider_v2.search_jobs({'q': q}))
+
+    initial_ids = [job['id'] for job in initial_jobs]
+    all_ids.extend(initial_ids)
+    print "Lets start to search new tasks \n"
 
     while True:
         # Get all latest jobs
         print '\nGetting Jobs at {} ...\n'.format(
             datetime.now().strftime('%H:%M'))
-        jobs = client.provider_v2.search_jobs(job_query)
-        current_jobs = set()
+        jobs = []
+        for q in queries:
+            jobs.extend(client.provider_v2.search_jobs({'q': q}))
 
         # Iterate every job
         for job in jobs:
 
-            # Generate a hash
-            uid = encode(job)
-            current_jobs.add(uid)
-
             # Check if not viewed; new job
-            if uid not in prev_jobs:
-
-                prev_jobs.add(uid)
+            if job['id'] not in all_ids:
+                all_ids.append(job['id'])
                 os.system('aplay {}'.format(NOTIFICATION_FILE))
-                print ('Time : {}\nJob Title : {}\nURL : {}\n'.format(
+                print 'Time : {}\nJob Title : {}\nURL : {}\n'.format(
                     datetime.now().strftime('%H:%M'),
                     job['title'], job['url']
-                ))
+                )
                 webbrowser.open(url=job['url'], autoraise=True, new=2)
-
-        prev_jobs = current_jobs
         # 1.5 minutes rest
         sleep(90)
