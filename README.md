@@ -1,14 +1,10 @@
-# upwork-secretary
-
 ### To run the program:
 
-* git clone https://github.com/ramansah/upwork-secretary.git
-
-* cd upwork-secretary/upwork-secretary
+* git clone https://github.com/albertlidas/upwork_jobs_search
 
 * Fill in Public / Secret Ley in credentials.json
 
-* python3 main.py
+* python main.py
 
 ### Output:
 
