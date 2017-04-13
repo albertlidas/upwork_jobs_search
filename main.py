@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     all_ids = []
 
-    queries = ['python', 'django']
+    queries = ['python', 'django', 'scraping']
     initial_jobs = []
 
     for q in queries:
