@@ -22,40 +22,59 @@ def Preferences(ev):
     # the button is optional here, simply use the corner x of the child window
     Button(win, text='OK', command=win.destroy).pack()
 
+
+def get_jobs():
+    global K
+    global T
+    string = K.get()
+    T.insert(0, string)
+
+
 # root window
 root = Tk()
 root.title('Upwork job searcher')
 
-# top navbar
-panelFrame = Frame(root, height=60, bg='gray')
-textFrame = Frame(root, height=340, width=800)
+# frames
+navbarFrame = Frame(root, height=60, width=800, bg='gray')
+resultsFrame = Frame(root, height=200, width=400, bg='yellow')
+keywordsFrame = Frame(root, height=200, width=400, bg='blue')
 
-panelFrame.pack(side='top', fill='x')
-textFrame.pack(side='bottom', fill='both', expand=1)
+navbarFrame.pack(side='top', fill='x')
+resultsFrame.place(x=50, y=50, width=200, height=200)
+keywordsFrame.pack(side='right', fill='x')
 
-# keyword placement
-
-listNodes = Listbox(root, height=50, width=40)
-S = Scrollbar(root, orient="vertical")
-
-S.pack(side=LEFT, fill=Y)
+# results placement
+T = Listbox(resultsFrame, height=30, width=40)
+S = Scrollbar(resultsFrame, orient="vertical")
+L = Label(resultsFrame, text="SEARCH RESULTS:")
+L.pack(side='top')
+S.pack(side=RIGHT, fill=Y)
 T.pack(side=LEFT, fill=Y)
 S.config(command=T.yview)
 T.config(yscrollcommand=S.set)
 T.insert(END, "http://hello.com")
 
+# keywords placement
+
+L = Label(keywordsFrame, text="input keywords to search")
+L.pack(side='top')
+
+K = Entry(keywordsFrame)
+K.pack(side=TOP)
+K.focus_set()
 
 # navbar buttons
-preferencesBtn = Button(panelFrame, text='Preferences')
-quitBtn = Button(panelFrame, text='Quit')
+preferencesBtn = Button(navbarFrame, text='Preferences')
+quitBtn = Button(navbarFrame, text='Quit')
 # navbar button process
 preferencesBtn.bind("<Button-1>", Preferences)
 quitBtn.bind("<Button-1>", Quit)
 # navbar buttons placement
 preferencesBtn.place(x=10, y=10, width=400, height=40)
-# saveBtn.place(x=60, y=10, width=40, height=40)
 quitBtn.place(x=450, y=10, width=120, height=40)
-# navbar buttons placement
+# keywordsFrame button
+searchBtn = Button(keywordsFrame, text='SEARCH', command=get_jobs)
+searchBtn.pack(side=RIGHT)
 
 
 root.mainloop()
